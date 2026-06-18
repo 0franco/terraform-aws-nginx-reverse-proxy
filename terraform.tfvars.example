@@ -1,0 +1,20 @@
+# Minimal turnkey deploy. Copy this file to terraform.tfvars and fill in values.
+
+aws_region  = "us-east-1"
+name_prefix = "nginx-proxy"
+key_name    = "your-aws-key-pair-name"
+ssh_cidr    = "1.1.1.1/32"
+
+# Manual TLS is the default. Upload certificates after the instance is created.
+tls_mode = "manual"
+
+# Uncomment for Let's Encrypt. Point DNS at proxy_public_ip before applying.
+# tls_mode          = "letsencrypt"
+# domain_name       = "app.example.com"
+# letsencrypt_email = "admin@example.com"
+# letsencrypt_auto_issue = false
+
+# Uncomment to use an existing public subnet instead of creating a VPC.
+# create_vpc = false
+# vpc_id     = "vpc-xxxxxxxx"
+# subnet_id  = "subnet-xxxxxxxx"
