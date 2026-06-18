@@ -2,16 +2,13 @@
 # shellcheck disable=SC2154
 set -euo pipefail
 
-export DEBIAN_FRONTEND=noninteractive
-
-apt-get update
-apt-get upgrade -y
-apt-get install -y nginx
+dnf upgrade -y
+dnf install -y nginx
 
 mkdir -p /etc/nginx/ssl /var/www/html
 chmod 755 /etc/nginx/ssl
 
-cat >/var/www/html/index.nginx-debian.html <<'HTML'
+cat >/usr/share/nginx/html/index.html <<'HTML'
 <!doctype html>
 <html>
 <head><title>NGINX proxy ready</title></head>
@@ -23,21 +20,21 @@ systemctl enable nginx
 systemctl start nginx
 
 if [ "${tls_mode}" = "letsencrypt" ]; then
-  apt-get install -y certbot python3-certbot-nginx
+  dnf install -y certbot python3-certbot-nginx
 
-  cat >/etc/nginx/sites-available/letsencrypt-http <<'NGINX'
+  mkdir -p /etc/nginx/conf.d
+  cat >/etc/nginx/conf.d/letsencrypt-http.conf <<'NGINX'
 server {
     listen 80;
     server_name ${domain_name};
 
     location / {
-        root /var/www/html;
-        index index.nginx-debian.html;
+        root /usr/share/nginx/html;
+        index index.html;
     }
 }
 NGINX
 
-  ln -sf /etc/nginx/sites-available/letsencrypt-http /etc/nginx/sites-enabled/letsencrypt-http
   nginx -t
   systemctl reload nginx
 

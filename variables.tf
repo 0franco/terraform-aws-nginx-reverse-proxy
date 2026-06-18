@@ -107,6 +107,12 @@ variable "instance_type" {
   default     = "t4g.nano"
 }
 
+variable "enable_elastic_ip" {
+  description = "Allocate and associate an Elastic IP with the proxy instance."
+  type        = bool
+  default     = true
+}
+
 variable "tls_mode" {
   description = "TLS setup mode. Use manual for uploaded certificates or letsencrypt for certbot."
   type        = string

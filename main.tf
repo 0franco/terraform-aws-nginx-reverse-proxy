@@ -9,6 +9,7 @@ locals {
   selected_vpc_id    = var.create_vpc ? aws_vpc.this[0].id : var.vpc_id
   selected_subnet_id = var.create_vpc ? aws_subnet.public[0].id : var.subnet_id
   selected_key_name  = var.create_ssh_key ? aws_key_pair.generated[0].key_name : var.key_name
+  proxy_public_ip    = var.enable_elastic_ip ? aws_eip.proxy[0].public_ip : aws_instance.proxy.public_ip
 }
 
 resource "tls_private_key" "generated" {
@@ -140,13 +141,13 @@ resource "aws_security_group" "proxy" {
   })
 }
 
-data "aws_ami" "ubuntu" {
+data "aws_ami" "amazon_linux" {
   most_recent = true
-  owners      = ["099720109477"]
+  owners      = ["amazon"]
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-arm64-server-*"]
+    values = ["al2023-ami-*-kernel-*-arm64"]
   }
 
   filter {
@@ -161,7 +162,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "proxy" {
-  ami                         = data.aws_ami.ubuntu.id
+  ami                         = data.aws_ami.amazon_linux.id
   instance_type               = var.instance_type
   subnet_id                   = local.selected_subnet_id
   vpc_security_group_ids      = [aws_security_group.proxy.id]
@@ -185,4 +186,21 @@ resource "aws_instance" "proxy" {
   tags = merge(local.common_tags, {
     Name = var.name_prefix
   })
+}
+
+resource "aws_eip" "proxy" {
+  count = var.enable_elastic_ip ? 1 : 0
+
+  domain = "vpc"
+
+  tags = merge(local.common_tags, {
+    Name = "${var.name_prefix}-eip"
+  })
+}
+
+resource "aws_eip_association" "proxy" {
+  count = var.enable_elastic_ip ? 1 : 0
+
+  allocation_id = aws_eip.proxy[0].id
+  instance_id   = aws_instance.proxy.id
 }
