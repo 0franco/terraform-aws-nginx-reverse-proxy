@@ -10,6 +10,7 @@ locals {
   selected_subnet_id = var.create_vpc ? aws_subnet.public[0].id : var.subnet_id
   selected_key_name  = var.create_ssh_key ? aws_key_pair.generated[0].key_name : var.key_name
   proxy_public_ip    = var.enable_elastic_ip ? aws_eip.proxy[0].public_ip : aws_instance.proxy.public_ip
+  ssh_is_ipv6        = can(regex(":", var.ssh_cidr))
 }
 
 resource "tls_private_key" "generated" {
@@ -121,11 +122,12 @@ resource "aws_security_group" "proxy" {
   }
 
   ingress {
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.ssh_cidr]
+    description      = "SSH"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = local.ssh_is_ipv6 ? [] : [var.ssh_cidr]
+    ipv6_cidr_blocks = local.ssh_is_ipv6 ? [var.ssh_cidr] : []
   }
 
   egress {

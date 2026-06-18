@@ -84,8 +84,8 @@ variable "ssh_cidr" {
   type        = string
 
   validation {
-    condition     = var.ssh_cidr != "0.0.0.0/0"
-    error_message = "Do not expose SSH to 0.0.0.0/0. Use your IP address with a /32 suffix."
+    condition     = !contains(["0.0.0.0/0", "::/0"], var.ssh_cidr)
+    error_message = "Do not expose SSH to the whole internet. Use your IPv4 address with /32 or IPv6 address with /128."
   }
 }
 
