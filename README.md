@@ -1,6 +1,8 @@
 # NGINX Proxy on AWS
 
-Terraform for a small AWS EC2 instance running NGINX as a public reverse proxy for private application servers.
+![Nginx Proxy Banner](.github/banner.webp)
+
+Terraform for AWS EC2 instance running NGINX as a public reverse proxy for private application servers.
 
 By default this creates a minimal VPC, public subnet, security group, Elastic IP, and Amazon Linux 2023 ARM instance. You can also deploy into an existing VPC and subnet.
 
