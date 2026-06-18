@@ -30,5 +30,16 @@ output "subnet_id" {
 
 output "ssh_command" {
   description = "SSH command for the default Ubuntu AMI user."
-  value       = "ssh ubuntu@${aws_instance.proxy.public_ip}"
+  value       = var.create_ssh_key ? "terraform output -raw generated_private_key_pem > ${local.selected_key_name}.pem && chmod 600 ${local.selected_key_name}.pem && ssh -i ${local.selected_key_name}.pem ubuntu@${aws_instance.proxy.public_ip}" : "ssh ubuntu@${aws_instance.proxy.public_ip}"
+}
+
+output "key_name" {
+  description = "AWS EC2 key pair attached to the proxy instance."
+  value       = local.selected_key_name
+}
+
+output "generated_private_key_pem" {
+  description = "Generated private key for SSH access. Store it securely."
+  value       = var.create_ssh_key ? tls_private_key.generated[0].private_key_pem : null
+  sensitive   = true
 }

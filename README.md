@@ -8,7 +8,6 @@ By default this creates a minimal VPC, public subnet, security group, and Ubuntu
 
 - Terraform 1.15.6 or newer
 - AWS credentials configured locally
-- An EC2 key pair in the target AWS region
 - A CIDR for SSH access, usually your public IP with `/32`
 
 ## Quick Start
@@ -21,7 +20,6 @@ Edit `terraform.tfvars`:
 
 ```hcl
 aws_region = "us-east-1"
-key_name   = "your-aws-key-pair-name"
 ssh_cidr   = "1.1.1.1/32"
 ```
 
@@ -37,7 +35,16 @@ terraform output
 Connect to the instance:
 
 ```sh
-ssh ubuntu@$(terraform output -raw proxy_public_ip)
+terraform output -raw generated_private_key_pem > nginx-proxy-ssh.pem
+chmod 600 nginx-proxy-ssh.pem
+ssh -i nginx-proxy-ssh.pem ubuntu@$(terraform output -raw proxy_public_ip)
+```
+
+To use an existing AWS key pair instead of a generated key:
+
+```hcl
+create_ssh_key = false
+key_name       = "your-aws-key-pair-name"
 ```
 
 ## Existing VPC
@@ -137,6 +144,7 @@ For the backend instance security group, allow the application port from `proxy_
 ## Security Notes
 
 - `ssh_cidr` cannot be `0.0.0.0/0`; use your current IP with `/32`.
+- Generated SSH private keys are stored in Terraform state. Protect state access or use an existing AWS key pair.
 - HTTP and HTTPS are public by default through `http_cidrs` and `https_cidrs`.
 - Backend application ports should not be open to the internet.
 - Terraform state can contain infrastructure identifiers. Store it according to your team security requirements.

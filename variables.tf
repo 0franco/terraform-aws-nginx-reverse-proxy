@@ -56,9 +56,27 @@ variable "availability_zone" {
   default     = ""
 }
 
-variable "key_name" {
-  description = "AWS EC2 key pair name used for SSH access."
+variable "create_ssh_key" {
+  description = "Generate and register an AWS EC2 key pair for SSH access."
+  type        = bool
+  default     = true
+}
+
+variable "ssh_key_name" {
+  description = "Name for the generated AWS EC2 key pair when create_ssh_key is true."
   type        = string
+  default     = ""
+}
+
+variable "key_name" {
+  description = "Existing AWS EC2 key pair name. Required when create_ssh_key is false."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.create_ssh_key || var.key_name != null
+    error_message = "key_name is required when create_ssh_key is false."
+  }
 }
 
 variable "ssh_cidr" {

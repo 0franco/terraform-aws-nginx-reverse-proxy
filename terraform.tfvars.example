@@ -2,7 +2,6 @@
 
 aws_region  = "us-east-1"
 name_prefix = "nginx-proxy"
-key_name    = "your-aws-key-pair-name"
 ssh_cidr    = "1.1.1.1/32"
 
 # Manual TLS is the default. Upload certificates after the instance is created.
@@ -18,3 +17,7 @@ tls_mode = "manual"
 # create_vpc = false
 # vpc_id     = "vpc-xxxxxxxx"
 # subnet_id  = "subnet-xxxxxxxx"
+
+# Uncomment to use an existing AWS key pair instead of generating one.
+# create_ssh_key = false
+# key_name       = "your-aws-key-pair-name"

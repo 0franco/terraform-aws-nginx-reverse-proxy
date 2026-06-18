@@ -8,6 +8,25 @@ locals {
 
   selected_vpc_id    = var.create_vpc ? aws_vpc.this[0].id : var.vpc_id
   selected_subnet_id = var.create_vpc ? aws_subnet.public[0].id : var.subnet_id
+  selected_key_name  = var.create_ssh_key ? aws_key_pair.generated[0].key_name : var.key_name
+}
+
+resource "tls_private_key" "generated" {
+  count = var.create_ssh_key ? 1 : 0
+
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "generated" {
+  count = var.create_ssh_key ? 1 : 0
+
+  key_name   = var.ssh_key_name != "" ? var.ssh_key_name : "${var.name_prefix}-ssh"
+  public_key = tls_private_key.generated[0].public_key_openssh
+
+  tags = merge(local.common_tags, {
+    Name = var.ssh_key_name != "" ? var.ssh_key_name : "${var.name_prefix}-ssh"
+  })
 }
 
 resource "aws_vpc" "this" {
@@ -147,7 +166,7 @@ resource "aws_instance" "proxy" {
   subnet_id                   = local.selected_subnet_id
   vpc_security_group_ids      = [aws_security_group.proxy.id]
   associate_public_ip_address = true
-  key_name                    = var.key_name
+  key_name                    = local.selected_key_name
   user_data_replace_on_change = true
 
   user_data = templatefile("${path.module}/user-data.sh.tpl", {
