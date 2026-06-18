@@ -6,7 +6,7 @@ By default this creates a minimal VPC, public subnet, security group, and Ubuntu
 
 ## Requirements
 
-- Terraform 1.9 or newer
+- Terraform 1.15.6 or newer
 - AWS credentials configured locally
 - An EC2 key pair in the target AWS region
 - A CIDR for SSH access, usually your public IP with `/32`
