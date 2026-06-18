@@ -101,7 +101,7 @@ variable "tls_mode" {
 }
 
 variable "domain_name" {
-  description = "Domain name for Let's Encrypt mode. Point DNS at proxy_public_ip before applying."
+  description = "Domain name used by Let's Encrypt mode."
   type        = string
   default     = ""
 

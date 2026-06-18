@@ -129,6 +129,8 @@ Replace:
 - `DOMAIN_NAME` with your domain
 - `BACKEND_PRIVATE_IP` with the private IP of your application server
 - `BACKEND_PORT` with the application port
+- `SSL_CERTIFICATE_PATH` with `/etc/nginx/ssl/cert.cert` for manual TLS or `/etc/letsencrypt/live/DOMAIN_NAME/fullchain.pem` for Let's Encrypt
+- `SSL_CERTIFICATE_KEY_PATH` with `/etc/nginx/ssl/cert.key` for manual TLS or `/etc/letsencrypt/live/DOMAIN_NAME/privkey.pem` for Let's Encrypt
 
 For the backend instance security group, allow the application port from `proxy_private_ip` only.
 
