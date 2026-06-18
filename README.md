@@ -176,3 +176,11 @@ Destroy:
 ```sh
 terraform destroy
 ```
+
+## 🤝 Contributing
+
+Contribute! Please open an issue or submit a pull request.
+
+<a href="https://www.buymeacoffee.com/travelingcode" target="_blank">
+  <img src="https://cdn.buymeacoffee.com/buttons/default-red.png" alt="Buy Me A Coffee" height="41" width="174" style="border-radius:10px">
+</a>
